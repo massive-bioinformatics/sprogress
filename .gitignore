@@ -1,0 +1,16 @@
+.#*
+*~
+._*
+
+*.bak
+*.swo
+*.swp
+*.tmp
+
+.DS_Store
+.Spotlight-V100
+.Trashes
+
+desktop.ini
+Thumbs.db
+ehthumbs.db
