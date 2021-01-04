@@ -16,12 +16,24 @@ if (NOT CURL_FOUND)
 endif ()
 
 add_executable (sprogress
+	"${CMAKE_CURRENT_SOURCE_DIR}/sources/buffer.c"
+	"${CMAKE_CURRENT_SOURCE_DIR}/sources/events.c"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sources/main.c"
+	"${CMAKE_CURRENT_SOURCE_DIR}/sources/options.c"
+	"${CMAKE_CURRENT_SOURCE_DIR}/sources/output.c"
 )
 
 target_link_libraries (sprogress
 	PRIVATE
 		CURL::libcurl
+)
+
+target_include_directories (sprogress
+	PRIVATE
+		$<BUILD_INTERFACE:
+			"${CMAKE_CURRENT_SOURCE_DIR}/headers"
+			"${CMAKE_CURRENT_SOURCE_DIR}/sources"
+		>
 )
 
 ##
