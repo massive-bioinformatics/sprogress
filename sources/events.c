@@ -310,7 +310,7 @@ bool write_finish_event(CURL * session, const struct command_options * options) 
 			}
 
 			fprintf(stderr,
-				"Could not POST start event: %s\n"
+				"Could not POST finish event: %s\n"
 					, curl_easy_strerror(status)
 			);
 		}
@@ -322,7 +322,7 @@ bool write_finish_event(CURL * session, const struct command_options * options) 
 			}
 
 			fprintf(stderr,
-				"Could not POST start event: %s\n"
+				"Could not POST finish event: %s\n"
 					, curl_easy_strerror(status)
 			);
 		}
@@ -335,7 +335,7 @@ bool write_finish_event(CURL * session, const struct command_options * options) 
 
 		if (http_response_code != 200) {
 			fprintf(stderr,
-				"Could not POST start event: HTTP response code - %li\n"
+				"Could not POST finish event: HTTP response code - %li\n"
 					, http_response_code
 			);
 
