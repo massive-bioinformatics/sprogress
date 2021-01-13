@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdint.h>
 
 /*!
 ** @file
@@ -50,6 +51,13 @@ struct command_options {
 	** ...TODO...
 	*/
 	size_t retry_count;
+
+	/*!
+	**
+	** @brief
+	** ...TODO...
+	*/
+	int64_t exit_code;
 
 	/*!
 	**

@@ -47,7 +47,7 @@ bool write_start_event(CURL * session, const struct command_options * options) {
 	uint8_t * buffer_cursor = msgpack_buffer;
 
 	if (msgpack_buffer == NULL) {
-			return (false);
+		return (false);
 	}
 
 	static
@@ -184,9 +184,10 @@ bool write_finish_event(CURL * session, const struct command_options * options) 
 
 	//  1 byte for the map
 	// 14 bytes for "action": "finish"
+	// 19 bytes for "exit_code": <integer>
 	// 11 bytes for "access_key": ...
 	// 11 bytes for "secret_key": ...
-	size_t msgpack_length = 1 + 14 + 11 + 11;
+	size_t msgpack_length = 1 + 14 + 19 + 11 + 11;
 
 	size_t identifier_length = strlen(options->identifier);
 	if (identifier_length < 32) {
@@ -214,25 +215,44 @@ bool write_finish_event(CURL * session, const struct command_options * options) 
 	uint8_t * buffer_cursor = msgpack_buffer;
 
 	if (msgpack_buffer == NULL) {
-			return (false);
+		return (false);
 	}
 
 	static
 	const char BUFFER_CHUNK1[] = {
-		0x83, 0xA6, 0x61, 0x63, 0x74, 0x69, 0x6F, 0x6E,
-		0xA6, 0x66, 0x69, 0x6E, 0x69, 0x73, 0x68, 0xAA,
-		0x61, 0x63, 0x63, 0x65, 0x73, 0x73, 0x5F, 0x6B,
-		0x65, 0x79,
+		0x84, 0xA6, 0x61, 0x63, 0x74, 0x69, 0x6F, 0x6E,
+		0xA6, 0x66, 0x69, 0x6E, 0x69, 0x73, 0x68, 0xA9,
+		0x65, 0x78, 0x69, 0x74, 0x5F, 0x63, 0x6F, 0x64,
+		0x65,
 	};
 
 	static
 	const char BUFFER_CHUNK2[] = {
+		0xAA, 0x61, 0x63, 0x63, 0x65, 0x73, 0x73, 0x5F,
+		0x6B, 0x65, 0x79,
+	};
+
+	static
+	const char BUFFER_CHUNK3[] = {
 		0xAA, 0x73, 0x65, 0x63, 0x72, 0x65, 0x74, 0x5F,
 		0x6B, 0x65, 0x79,
 	};
 
 	memcpy(buffer_cursor, BUFFER_CHUNK1, sizeof(BUFFER_CHUNK1));
 	buffer_cursor += sizeof(BUFFER_CHUNK1);
+
+	*buffer_cursor++ = 0xD3;
+	*buffer_cursor++ = (options->exit_code >> 56) & 0xFF;
+	*buffer_cursor++ = (options->exit_code >> 48) & 0xFF;
+	*buffer_cursor++ = (options->exit_code >> 40) & 0xFF;
+	*buffer_cursor++ = (options->exit_code >> 32) & 0xFF;
+	*buffer_cursor++ = (options->exit_code >> 24) & 0xFF;
+	*buffer_cursor++ = (options->exit_code >> 16) & 0xFF;
+	*buffer_cursor++ = (options->exit_code >> 8) & 0xFF;
+	*buffer_cursor++ = options->exit_code & 0xFF;
+
+	memcpy(buffer_cursor, BUFFER_CHUNK2, sizeof(BUFFER_CHUNK2));
+	buffer_cursor += sizeof(BUFFER_CHUNK2);
 
 	if (identifier_length < 32) {
 		*buffer_cursor++ = 0xA0 | (((uint8_t) identifier_length) & 0x1F);
@@ -254,8 +274,8 @@ bool write_finish_event(CURL * session, const struct command_options * options) 
 	memcpy(buffer_cursor, options->identifier, identifier_length);
 	buffer_cursor += identifier_length;
 
-	memcpy(buffer_cursor, BUFFER_CHUNK2, sizeof(BUFFER_CHUNK2));
-	buffer_cursor += sizeof(BUFFER_CHUNK2);
+	memcpy(buffer_cursor, BUFFER_CHUNK3, sizeof(BUFFER_CHUNK3));
+	buffer_cursor += sizeof(BUFFER_CHUNK3);
 
 	if (access_secret_length < 32) {
 		*buffer_cursor++ = 0xA0 | (((uint8_t) access_secret_length) & 0x1F);

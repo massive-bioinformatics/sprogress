@@ -11,6 +11,7 @@
 
 bool process_options(int argc, const char * argv[], struct command_options * options) {
 	options->retry_count = 3;
+	options->exit_code = 0;
 	options->write_output = true;
 	options->emit_start = true;
 	options->emit_finish = true;
@@ -29,10 +30,6 @@ bool process_options(int argc, const char * argv[], struct command_options * opt
 
 		return (false);
 	}
-
-	//fprintf(stderr,
-	//	"Function `process_options` is not implemented yet!\n"
-	//);
 
 	options->backend_endpoint = argv[1];
 	options->identifier = argv[2];
